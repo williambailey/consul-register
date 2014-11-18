@@ -4,6 +4,25 @@ import (
 	api "github.com/armon/consul-api"
 )
 
+func init() {
+	DefaultFactories = append(
+		DefaultFactories,
+		func(id string) (Actioner, error) {
+			switch id {
+			case "KVDelete":
+				return &KVDelete{}, nil
+			case "KVDeleteTree":
+				return &KVDeleteTree{}, nil
+			case "KVSet":
+				return &KVSet{}, nil
+			case "KVSetIfNotExist":
+				return &KVSetIfNotExist{}, nil
+			}
+			return nil, UnknownFactoryIDError(id)
+		},
+	)
+}
+
 // KVDelete action
 type KVDelete struct {
 	Key string
@@ -30,7 +49,7 @@ func (a *KVDeleteTree) Action(c *Ctx) error {
 type KVSet struct {
 	Key   string
 	Flags uint64
-	Value []byte
+	Value string
 }
 
 // Action performs the KV set action
@@ -38,7 +57,7 @@ func (a *KVSet) Action(c *Ctx) error {
 	p := &api.KVPair{
 		Key:   a.Key,
 		Flags: a.Flags,
-		Value: a.Value,
+		Value: []byte(a.Value),
 	}
 	_, err := c.API.KV().Put(p, nil)
 	return err
@@ -48,7 +67,7 @@ func (a *KVSet) Action(c *Ctx) error {
 type KVSetIfNotExist struct {
 	Key   string
 	Flags uint64
-	Value []byte
+	Value string
 }
 
 // Action performs the KV set if not exist action
@@ -56,7 +75,7 @@ func (a *KVSetIfNotExist) Action(c *Ctx) error {
 	p := &api.KVPair{
 		Key:   a.Key,
 		Flags: a.Flags,
-		Value: a.Value,
+		Value: []byte(a.Value),
 	}
 	_, _, err := c.API.KV().CAS(p, nil)
 	return err

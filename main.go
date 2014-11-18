@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -13,6 +14,7 @@ import (
 	"unicode"
 
 	api "github.com/armon/consul-api"
+	"github.com/williambailey/consul-register/action"
 )
 
 // A Command is an implementation of a consul-register command
@@ -195,4 +197,36 @@ func parseConsulFlag(consul, token string) (*api.Client, error) {
 		return nil, fmt.Errorf("Unable to create consul api client.\n\n%s", err)
 	}
 	return client, nil
+}
+
+func loadJSONActions(filename string) (action.Actions, error) {
+	type item struct {
+		Action string
+		Config json.RawMessage
+	}
+	var (
+		actions action.Actions
+		items   []item
+		err     error
+	)
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to open %q.\n\n%s", file, err)
+	}
+	err = json.NewDecoder(file).Decode(&items)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to load actions from JSON.\n\n%s", err)
+	}
+	for o, i := range items {
+		a, err := action.DefaultFactories.NewAction(i.Action)
+		if err != nil {
+			return nil, fmt.Errorf("Unable to load action #%d, %s.\n\n%s", o, i.Action, err)
+		}
+		err = json.Unmarshal(i.Config, a)
+		if err != nil {
+			return nil, fmt.Errorf("Unable to load action #%d, %s.\n\n%s", o, i.Action, err)
+		}
+		actions = append(actions, a)
+	}
+	return actions, nil
 }

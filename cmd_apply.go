@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"time"
 
 	"github.com/williambailey/consul-register/action"
 )
@@ -29,31 +28,35 @@ func init() {
 
 func runApply(cmd *Command, args []string) {
 	var (
-		err error
-		ctx action.Ctx
+		err     error
+		ctx     action.Ctx
+		actions action.Actions
 	)
+	if len(args) != 1 {
+		cmd.UsageExit(nil)
+	}
 	ctx.API, err = parseConsulFlag(flagApply.server, flagApply.token)
 	if err != nil {
 		cmd.UsageExit(err)
 	}
+	actions, err = loadJSONActions(args[0])
+	if err != nil {
+		cmd.UsageExit(err)
+	}
 
-	err = doApply(&ctx, args)
+	err = doApply(&ctx, actions)
 	if err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func doApply(ctx *action.Ctx, args []string) error {
+func doApply(ctx *action.Ctx, actions action.Actions) error {
 	var err error
-	a := action.KVSet{
-		Key:   "test",
-		Value: []byte(time.Now().Local().String()),
+	for _, a := range actions {
+		err = a.Action(ctx)
+		if err != nil {
+			panic(err)
+		}
 	}
-
-	err = a.Action(ctx)
-	if err != nil {
-		panic(err)
-	}
-
 	return nil
 }

@@ -4,6 +4,21 @@ import (
 	api "github.com/armon/consul-api"
 )
 
+func init() {
+	DefaultFactories = append(
+		DefaultFactories,
+		func(id string) (Actioner, error) {
+			switch id {
+			case "ACLDelete":
+				return &ACLDelete{}, nil
+			case "ACLSet":
+				return &ACLSet{}, nil
+			}
+			return nil, UnknownFactoryIDError(id)
+		},
+	)
+}
+
 // ACLDelete action
 type ACLDelete struct {
 	Name string

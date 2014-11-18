@@ -4,6 +4,21 @@ import (
 	api "github.com/armon/consul-api"
 )
 
+func init() {
+	DefaultFactories = append(
+		DefaultFactories,
+		func(id string) (Actioner, error) {
+			switch id {
+			case "ExternalNodeRegister":
+				return &ExternalNodeRegister{}, nil
+			case "ExternalNodeDeregister":
+				return &ExternalNodeDeregister{}, nil
+			}
+			return nil, UnknownFactoryIDError(id)
+		},
+	)
+}
+
 // ExternalNodeService holds information about a service provided by an external node
 type ExternalNodeService struct {
 	ID      string

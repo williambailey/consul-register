@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/williambailey/consul-register/action"
 )
@@ -52,7 +54,10 @@ func runApply(cmd *Command, args []string) {
 
 func doApply(ctx *action.Ctx, actions action.Actions) error {
 	var err error
-	for _, a := range actions {
+	t := len(actions)
+	f := fmt.Sprintf("%% %[1]dd of %%-%[1]dd - %%s\n", len(strconv.Itoa(t)))
+	for i, a := range actions {
+		fmt.Printf(f, i+1, t, a)
 		err = a.Action(ctx)
 		if err != nil {
 			panic(err)

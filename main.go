@@ -220,11 +220,11 @@ func loadJSONActions(filename string) (action.Actions, error) {
 	for o, i := range items {
 		a, err := action.DefaultFactories.NewAction(i.Action)
 		if err != nil {
-			return nil, fmt.Errorf("Unable to load action #%d, %s.\n\n%s", o, i.Action, err)
+			return nil, fmt.Errorf("Unable to load action #%d, %s.\n\n%s", o+1, i.Action, err)
 		}
 		err = json.Unmarshal(i.Config, a)
 		if err != nil {
-			return nil, fmt.Errorf("Unable to load action #%d, %s.\n\n%s", o, i.Action, err)
+			return nil, fmt.Errorf("Unable to load action #%d, %s.\n\n%s", o+1, i.Action, err)
 		}
 		actions = append(actions, a)
 	}

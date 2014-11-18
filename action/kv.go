@@ -1,6 +1,9 @@
 package action
 
 import (
+	"errors"
+	"fmt"
+
 	api "github.com/armon/consul-api"
 )
 
@@ -34,6 +37,19 @@ func (a *KVDelete) Action(c *Ctx) error {
 	return err
 }
 
+// Validate that the action is valid in its current state.
+func (a *KVDelete) Validate() error {
+	if a.Key == "" {
+		return errors.New("Key must not be empty.")
+	}
+	return nil
+}
+
+// String representation of the action.
+func (a *KVDelete) String() string {
+	return fmt.Sprintf("KV Delete %q", a.Key)
+}
+
 // KVDeleteTree action
 type KVDeleteTree struct {
 	Prefix string
@@ -43,6 +59,19 @@ type KVDeleteTree struct {
 func (a *KVDeleteTree) Action(c *Ctx) error {
 	_, err := c.API.KV().DeleteTree(a.Prefix, nil)
 	return err
+}
+
+// Validate that the action is valid in its current state.
+func (a *KVDeleteTree) Validate() error {
+	if a.Prefix == "" {
+		return errors.New("Prefix must not be empty.")
+	}
+	return nil
+}
+
+// String representation of the action.
+func (a *KVDeleteTree) String() string {
+	return fmt.Sprintf("KV Delete Tree %q", a.Prefix)
 }
 
 // KVSet action
@@ -63,6 +92,19 @@ func (a *KVSet) Action(c *Ctx) error {
 	return err
 }
 
+// Validate that the action is valid in its current state.
+func (a *KVSet) Validate() error {
+	if a.Key == "" {
+		return errors.New("Key must not be empty.")
+	}
+	return nil
+}
+
+// String representation of the action.
+func (a *KVSet) String() string {
+	return fmt.Sprintf("KV Set %q %d %q", a.Key, a.Flags, a.Value)
+}
+
 // KVSetIfNotExist action
 type KVSetIfNotExist struct {
 	Key   string
@@ -79,4 +121,17 @@ func (a *KVSetIfNotExist) Action(c *Ctx) error {
 	}
 	_, _, err := c.API.KV().CAS(p, nil)
 	return err
+}
+
+// Validate that the action is valid in its current state.
+func (a *KVSetIfNotExist) Validate() error {
+	if a.Key == "" {
+		return errors.New("Key must not be empty.")
+	}
+	return nil
+}
+
+// String representation of the action.
+func (a *KVSetIfNotExist) String() string {
+	return fmt.Sprintf("KV Set If Not Exist %q %d %q", a.Key, a.Flags, a.Value)
 }

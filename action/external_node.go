@@ -1,6 +1,9 @@
 package action
 
 import (
+	"errors"
+	"fmt"
+
 	api "github.com/armon/consul-api"
 )
 
@@ -67,6 +70,20 @@ func (a *ExternalNodeRegister) Action(c *Ctx) error {
 	return nil
 }
 
+// Validate that the action is valid in its current state.
+func (a *ExternalNodeRegister) Validate() error {
+	if a.Node == "" {
+		return errors.New("Node must not be empty.")
+	}
+	return nil
+}
+
+// String representation of the action.
+func (a *ExternalNodeRegister) String() string {
+	// TODO Better string for node vs. node service(s).
+	return fmt.Sprintf("External Node Register %q", a.Node)
+}
+
 // ExternalNodeDeregister action
 type ExternalNodeDeregister struct {
 	Node     string
@@ -100,4 +117,18 @@ func (a *ExternalNodeDeregister) Action(c *Ctx) error {
 		}
 	}
 	return nil
+}
+
+// Validate that the action is valid in its current state.
+func (a *ExternalNodeDeregister) Validate() error {
+	if a.Node == "" {
+		return errors.New("Node must not be empty.")
+	}
+	return nil
+}
+
+// String representation of the action.
+func (a *ExternalNodeDeregister) String() string {
+	// TODO Better string for full node vs. node service(s).
+	return fmt.Sprintf("External Node Deregister %q", a.Node)
 }

@@ -1,6 +1,9 @@
 package action
 
 import (
+	"errors"
+	"fmt"
+
 	api "github.com/armon/consul-api"
 )
 
@@ -43,6 +46,19 @@ func (a *ACLDelete) Action(c *Ctx) error {
 		}
 	}
 	return nil
+}
+
+// Validate that the action is valid in its current state.
+func (a *ACLDelete) Validate() error {
+	if a.Name == "" {
+		return errors.New("Name must not be empty.")
+	}
+	return nil
+}
+
+// String representation of the action.
+func (a *ACLDelete) String() string {
+	return fmt.Sprintf("ACL Delete %q", a.Name)
 }
 
 // ACLSet action
@@ -93,4 +109,17 @@ func (a *ACLSet) Action(c *Ctx) error {
 		}
 	}
 	return nil
+}
+
+// Validate that the action is valid in its current state.
+func (a *ACLSet) Validate() error {
+	if a.Name == "" {
+		return errors.New("Name must not be empty.")
+	}
+	return nil
+}
+
+// String representation of the action.
+func (a *ACLSet) String() string {
+	return fmt.Sprintf("ACL Set %q %q", a.Name, a.Rules)
 }

@@ -49,9 +49,9 @@ type Actioner interface {
 	// Action performs the action using the provided context
 	Action(c *Ctx) error
 	// Validate check that the action is valid in its current state
-	//Validate() error
+	Validate() error
 	// String to give us a user friendly identifier for the actioner
-	//String() string
+	String() string
 }
 
 //Ctx provides context information to the Actioner.

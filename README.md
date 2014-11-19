@@ -17,7 +17,7 @@ Usage
 
 ```
 $ consul-register
-consul-register is a tool for managing consul key value storage.
+consul-register v0.1.0 is a tool for managing consul runtime registrations.
 Usage:
 consul-register command [arguments]
 

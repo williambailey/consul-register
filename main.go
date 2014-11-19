@@ -226,6 +226,10 @@ func loadJSONActions(filename string) (action.Actions, error) {
 		if err != nil {
 			return nil, fmt.Errorf("Unable to load action #%d, %s.\n\n%s", o+1, i.Action, err)
 		}
+		err = a.Validate()
+		if err != nil {
+			return nil, fmt.Errorf("Unable to load action #%d, %s.\n\n%s", o+1, i.Action, err)
+		}
 		actions = append(actions, a)
 	}
 	return actions, nil

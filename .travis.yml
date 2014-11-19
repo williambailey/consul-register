@@ -5,5 +5,5 @@ install:
   - go get -d ./...
 script:
   - go test -v ./...
-  - go build -o
+  - go build
   - ./consul-register help

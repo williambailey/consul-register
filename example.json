@@ -1,0 +1,124 @@
+[
+
+  {
+    "Action": "ACLSet",
+    "Config": {
+      "Name": "example 1",
+      "Rules": "# New Rules 1"
+    }
+  },
+  {
+    "Action": "ACLSet",
+    "Config": {
+      "Name": "example 2",
+      "Rules": "# New Rules 2"
+    }
+  },
+  {
+    "Action": "ACLSet",
+    "Config": {
+      "Name": "example 2",
+      "Rules": "# New Rules 2 updated"
+    }
+  },
+  {
+    "Action": "ACLDelete",
+    "Config": {
+      "Name": "example 1"
+    }
+  },
+
+  
+
+  {
+    "Action": "ExternalNodeRegister",
+    "Config": {
+      "Node": "example1",
+      "Address": "example.com"
+    }
+  },
+  {
+    "Action": "ExternalNodeRegister",
+    "Config": {
+      "Node": "example2",
+      "Address": "example.com",
+      "Services": [
+        {
+          "ID": "ex-web",
+          "Service":"example web",
+          "Tags": [ "t1", "t2" ],
+          "Port": 80
+        },
+        {
+          "ID": "ex-proxy",
+          "Service":"example proxy",
+          "Port": 8080
+        }
+      ]
+    }
+  },
+  {
+    "Action": "ExternalNodeDeregister",
+    "Config": {
+      "Node": "example1"
+    }
+  },
+  {
+    "Action": "ExternalNodeDeregister",
+    "Config": {
+      "Node": "example2",
+      "Services": [ "ex-proxy" ]
+    }
+  },
+
+
+
+  {
+    "Action": "KVDeleteTree",
+    "Config": {
+      "Prefix": "example"
+    }
+  },
+  {
+    "Action": "KVSet",
+    "Config": {
+      "Key": "example/foo",
+      "Value": "1"
+    }
+  },
+  {
+    "Action": "KVSet",
+    "Config": {
+      "Key": "example/bar",
+      "Value": "2"
+    }
+  },
+  {
+    "Action": "KVSet",
+    "Config": {
+      "Key": "example/baz",
+      "Value": "3"
+    }
+  },
+  {
+    "Action": "KVSetIfNotExist",
+    "Config": {
+      "Key": "example/baz",
+      "Value": "4"
+    }
+  },
+  {
+    "Action": "KVDelete",
+    "Config": {
+      "Key": "example/bar"
+    }
+  },
+  {
+    "Action": "KVSetIfNotExist",
+    "Config": {
+      "Key": "example/bar",
+      "Value": "5"
+    }
+  }
+
+]

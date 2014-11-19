@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"net/url"
 	"os"
 	"strings"
@@ -16,6 +15,12 @@ import (
 	api "github.com/armon/consul-api"
 	"github.com/williambailey/consul-register/action"
 )
+
+// Name is simply the app name
+const Name = "consul-register"
+
+// Version is simply the app version
+const Version = "0.1.0"
 
 // A Command is an implementation of a consul-register command
 // like consul-register foo or consul-register bar.
@@ -60,8 +65,8 @@ func (c *Command) UsageDefaults() string {
 
 // UsageExit displays usage for the command and then exist.
 func (c *Command) UsageExit(msg interface{}) {
-	fmt.Fprintf(os.Stderr, "Usage: consul-register %s\n\n", c.Usage)
-	fmt.Fprintf(os.Stderr, "Run 'consul-register help %s' for help.\n", c.Name())
+	fmt.Fprintf(os.Stderr, "Usage: %s %s\n\n", Name, c.Usage)
+	fmt.Fprintf(os.Stderr, "Run '%s help %s' for help.\n", Name, c.Name())
 	if msg != nil {
 		fmt.Fprintf(os.Stderr, "\n%s\n\n", msg)
 	}
@@ -79,8 +84,6 @@ var commands = []*Command{
 func main() {
 	flag.Usage = usageExit
 	flag.Parse()
-	log.SetFlags(0)
-	log.SetPrefix("consul-register: ")
 	args := flag.Args()
 	if len(args) < 1 {
 		usageExit()
@@ -100,13 +103,13 @@ func main() {
 		}
 	}
 
-	fmt.Fprintf(os.Stderr, "consul-register: unknown command %q\n", args[0])
-	fmt.Fprintf(os.Stderr, "Run 'consul-register help' for usage.\n")
+	fmt.Fprintf(os.Stderr, "%s: unknown command %q\n", Name, args[0])
+	fmt.Fprintf(os.Stderr, "Run '%s help' for usage.\n", Name)
 	os.Exit(2)
 }
 
 var usageTemplate = `
-consul-register is a tool for managing consul runtime registrations.
+{{appName}} v{{appVersion}} is a tool for managing consul runtime registrations.
 Usage:
   consul-register command [arguments]
 
@@ -118,7 +121,7 @@ Use "consul-register help [command]" for more information about a command.
 `
 
 var helpTemplate = `
-Usage: consul-register {{.Usage | trim}}
+Usage: {{appName}} {{.Usage | trim}}
 {{.UsageDefaults | trimRight}}
 
 {{.Long | trim}}
@@ -130,7 +133,7 @@ func help(args []string) {
 		return
 	}
 	if len(args) != 1 {
-		fmt.Fprintf(os.Stderr, "usage: consul-register help command\n\n")
+		fmt.Fprintf(os.Stderr, "usage: %s help command\n\n", Name)
 		fmt.Fprintf(os.Stderr, "Too many arguments given.\n")
 		os.Exit(2)
 	}
@@ -155,8 +158,10 @@ func printUsage(w io.Writer) {
 func tmpl(w io.Writer, text string, data interface{}) {
 	t := template.New("top")
 	t.Funcs(template.FuncMap{
-		"trim":      strings.TrimSpace,
-		"trimRight": func(s string) string { return strings.TrimRightFunc(s, unicode.IsSpace) },
+		"appName":    func() string { return Name },
+		"appVersion": func() string { return Version },
+		"trim":       strings.TrimSpace,
+		"trimRight":  func(s string) string { return strings.TrimRightFunc(s, unicode.IsSpace) },
 	})
 	template.Must(t.Parse(strings.TrimSpace(text) + "\n"))
 	if err := t.Execute(w, data); err != nil {

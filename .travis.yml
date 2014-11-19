@@ -1,9 +1,8 @@
 language: go
 go:
  - tip
-install:
-  - go get -d ./...
 script:
-  - go test -v ./...
-  - go build
-  - ./consul-register help
+  - make test build
+  - ./bin/consul-register help
+  - ./bin/consul-register help apply
+  - ./bin/consul-register help export

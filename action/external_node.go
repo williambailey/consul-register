@@ -3,6 +3,7 @@ package action
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	api "github.com/armon/consul-api"
 )
@@ -75,13 +76,28 @@ func (a *ExternalNodeRegister) Validate() error {
 	if a.Node == "" {
 		return errors.New("Node must not be empty.")
 	}
+	if a.Address == "" {
+		return errors.New("Address must not be empty.")
+	}
+	for _, s := range a.Services {
+		if s.Service == "" {
+			return errors.New("Service must not be empty.")
+		}
+	}
 	return nil
 }
 
 // String representation of the action.
 func (a *ExternalNodeRegister) String() string {
-	// TODO Better string for node vs. node service(s).
-	return fmt.Sprintf("External Node Register %q", a.Node)
+	if len(a.Services) < 1 {
+		return fmt.Sprintf("External Node Register %q %q", a.Node, a.Address)
+	}
+	var services []string
+	for _, s := range a.Services {
+		services = append(services, fmt.Sprintf("%q %q %q %d", s.Service, s.ID, strings.Join(s.Tags, ", "), s.Port))
+	}
+	return fmt.Sprintf("External Node Register %q %q services, %s", a.Node, a.Address, strings.Join(services, ", "))
+
 }
 
 // ExternalNodeDeregister action
@@ -129,6 +145,8 @@ func (a *ExternalNodeDeregister) Validate() error {
 
 // String representation of the action.
 func (a *ExternalNodeDeregister) String() string {
-	// TODO Better string for full node vs. node service(s).
-	return fmt.Sprintf("External Node Deregister %q", a.Node)
+	if len(a.Services) < 1 {
+		return fmt.Sprintf("External Node Deregister %q", a.Node)
+	}
+	return fmt.Sprintf("External Node Deregister %q services %q ", a.Node, strings.Join(a.Services, ", "))
 }

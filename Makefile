@@ -29,4 +29,8 @@ package: xcompile
 		echo $$f; \
 	done
 
-.PHONY: all deps build test xcompile package
+clean:
+	@rm -rf bin/
+	@rm -rf build/
+
+.PHONY: all deps build test xcompile package clean

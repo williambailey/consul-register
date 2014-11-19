@@ -21,11 +21,13 @@ var (
 	flagApply struct {
 		server string
 		token  string
+		dry    bool
 	}
 )
 
 func init() {
 	consulFlag(&cmdApply.Flag, &flagApply.server, &flagApply.token)
+	cmdApply.Flag.BoolVar(&flagApply.dry, "dry", false, "Perform a dry run.")
 }
 
 func runApply(cmd *Command, args []string) {
@@ -54,13 +56,20 @@ func runApply(cmd *Command, args []string) {
 
 func doApply(ctx *action.Ctx, actions action.Actions) error {
 	var err error
+	if flagApply.dry {
+		fmt.Println("!! Dry run.")
+	}
 	t := len(actions)
-	f := fmt.Sprintf("%% %[1]dd of %%-%[1]dd - %%s\n", len(strconv.Itoa(t)))
+	f := fmt.Sprintf("%%%dd of %d - %%s\n", len(strconv.Itoa(t)), t)
 	for i, a := range actions {
-		fmt.Printf(f, i+1, t, a)
-		err = a.Action(ctx)
-		if err != nil {
-			panic(err)
+		fmt.Printf(f, i+1, a)
+		if flagApply.dry {
+			//...
+		} else {
+			err = a.Action(ctx)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 	return nil

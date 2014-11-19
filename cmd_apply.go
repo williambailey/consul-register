@@ -9,10 +9,10 @@ import (
 )
 
 var cmdApply = &Command{
-	Usage: "apply [options] file",
+	Usage: "apply [options] file.json",
 	Short: "Apply a list of actions to the consul server.",
 	Long: `
-blah
+file.json contains an array of { "Action": "", "Config": {} } items that get applied in order.	
 `,
 	Run: runApply,
 }

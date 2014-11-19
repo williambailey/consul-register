@@ -31,6 +31,11 @@ type KVDelete struct {
 	Key string
 }
 
+// Type returns the type identifier for the actioner
+func (a *KVDelete) Type() string {
+	return "KVDelete"
+}
+
 // Action performs the KV delete action
 func (a *KVDelete) Action(c *Ctx) error {
 	_, err := c.API.KV().Delete(a.Key, nil)
@@ -53,6 +58,11 @@ func (a *KVDelete) String() string {
 // KVDeleteTree action
 type KVDeleteTree struct {
 	Prefix string
+}
+
+// Type returns the type identifier for the actioner
+func (a *KVDeleteTree) Type() string {
+	return "KVDeleteTree"
 }
 
 // Action performs the KV delete action
@@ -79,6 +89,11 @@ type KVSet struct {
 	Key   string
 	Flags uint64
 	Value string
+}
+
+// Type returns the type identifier for the actioner
+func (a *KVSet) Type() string {
+	return "KVSet"
 }
 
 // Action performs the KV set action
@@ -110,6 +125,11 @@ type KVSetIfNotExist struct {
 	Key   string
 	Flags uint64
 	Value string
+}
+
+// Type returns the type identifier for the actioner
+func (a *KVSetIfNotExist) Type() string {
+	return "KVSetIfNotExist"
 }
 
 // Action performs the KV set if not exist action

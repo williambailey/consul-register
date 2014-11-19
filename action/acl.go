@@ -27,6 +27,11 @@ type ACLDelete struct {
 	Name string
 }
 
+// Type returns the type identifier for the actioner
+func (a *ACLDelete) Type() string {
+	return "ACLDelete"
+}
+
 // Action performs the ACL delete action
 func (a *ACLDelete) Action(c *Ctx) error {
 	q := &api.QueryOptions{
@@ -65,6 +70,11 @@ func (a *ACLDelete) String() string {
 type ACLSet struct {
 	Name  string
 	Rules string
+}
+
+// Type returns the type identifier for the actioner
+func (a *ACLSet) Type() string {
+	return "ACLSet"
 }
 
 // Action performs the ACL set

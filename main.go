@@ -73,6 +73,7 @@ func (c *Command) UsageExit(msg interface{}) {
 // by 'consul-register help'.
 var commands = []*Command{
 	cmdApply,
+	cmdExport,
 }
 
 func main() {
@@ -105,7 +106,7 @@ func main() {
 }
 
 var usageTemplate = `
-consul-register is a tool for managing consul key value storage.
+consul-register is a tool for managing consul runtime registrations.
 Usage:
   consul-register command [arguments]
 
@@ -233,4 +234,26 @@ func loadJSONActions(filename string) (action.Actions, error) {
 		actions = append(actions, a)
 	}
 	return actions, nil
+}
+
+func saveJSONActions(actions action.Actions) (bytes.Buffer, error) {
+	type item struct {
+		Action string
+		Config action.Actioner
+	}
+	items := make([]item, len(actions))
+	for o, a := range actions {
+		items[o] = item{
+			Action: a.Type(),
+			Config: a,
+		}
+	}
+	var out bytes.Buffer
+	b, err := json.Marshal(items)
+	if err != nil {
+		return out, err
+	}
+	json.Indent(&out, b, "", "  ")
+	out.WriteString("\n")
+	return out, nil
 }

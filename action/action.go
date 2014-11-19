@@ -46,6 +46,8 @@ type Actions []Actioner
 
 // Actioner performs an action.
 type Actioner interface {
+	// Type returns the type identifier for the actioner
+	Type() string
 	// Action performs the action using the provided context
 	Action(c *Ctx) error
 	// Validate check that the action is valid in its current state

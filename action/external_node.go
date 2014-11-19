@@ -38,6 +38,11 @@ type ExternalNodeRegister struct {
 	Services []*ExternalNodeService
 }
 
+// Type returns the type identifier for the actioner
+func (a *ExternalNodeRegister) Type() string {
+	return "ExternalNodeRegister"
+}
+
 // Action registers an external node
 func (a *ExternalNodeRegister) Action(c *Ctx) error {
 	_, err := c.API.Catalog().Register(
@@ -104,6 +109,11 @@ func (a *ExternalNodeRegister) String() string {
 type ExternalNodeDeregister struct {
 	Node     string
 	Services []string
+}
+
+// Type returns the type identifier for the actioner
+func (a *ExternalNodeDeregister) Type() string {
+	return "ExternalNodeDeregister"
 }
 
 // Action deregisters an external node
